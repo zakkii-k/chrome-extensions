@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Link Peek",
+  "version": "0.1.0",
+  "description": "外部リンクをページ上で一時表示。拡大したときだけ新しいタブへ。",
+  "minimum_chrome_version": "127",
+  "permissions": [
+    "storage",
+    "webNavigation",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Link Peek：クリックで有効／無効"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "viewer.html",
+        "viewer.js",
+        "viewer.css",
+        "policy.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; frame-src http: https:; base-uri 'none';"
+  }
+}
