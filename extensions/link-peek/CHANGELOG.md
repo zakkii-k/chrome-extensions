@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 — 2026-10-25
+
+- プレビューの元タブ・拡張開始のサブフレームだけでContent-Security-Policy応答ヘッダーを一時除去し、日経・NHKの埋め込み禁止に対応。通常のタブには適用せず、閉じる・元ページ移動・タブ終了時に解除。
+- ヘッダー全体を除くためnonceなど他のCSP保護も当該応答では外れることをREADMEとPrivacyに明記。sandbox・Cookie設定・HTML内のmeta CSPは維持。
+
 ## 0.1.3 — 2026-10-25
 
 - 拡張機能更新後の古いコンテンツスクリプトでExtension context invalidatedの同期例外が漏れる問題を修正。

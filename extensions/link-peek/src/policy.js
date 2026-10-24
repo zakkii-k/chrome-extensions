@@ -18,7 +18,10 @@ export function previewLink(event, anchor, base) {
 export function frameRule(id, tabId, extensionId) {
   return {
     id, priority:1,
-    action:{type:'modifyHeaders',responseHeaders:[{header:'x-frame-options',operation:'remove'}]},
+    action:{type:'modifyHeaders',responseHeaders:[
+      {header:'x-frame-options',operation:'remove'},
+      {header:'content-security-policy',operation:'remove'}
+    ]},
     condition:{tabIds:[tabId],initiatorDomains:[extensionId],resourceTypes:['sub_frame']}
   };
 }

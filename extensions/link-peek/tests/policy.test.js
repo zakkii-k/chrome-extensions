@@ -28,7 +28,7 @@ test('parent and top navigation targets are left untouched',()=>{
 test('header exception is session-only, tab-scoped and extension-initiated subframes only',()=>{
  const rule=frameRule(3,99,'extension-id');
  assert.deepEqual(rule.condition,{tabIds:[99],initiatorDomains:['extension-id'],resourceTypes:['sub_frame']});
- assert.deepEqual(rule.action.responseHeaders,[{header:'x-frame-options',operation:'remove'}]);
+ assert.deepEqual(rule.action.responseHeaders,[{header:'x-frame-options',operation:'remove'},{header:'content-security-policy',operation:'remove'}]);
  assert.equal(rule.id,3);
 });
 test('t.co is resolved without cookies before frame navigation',async()=>{
