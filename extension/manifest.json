@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "New Tab Launcher",
+  "version": "0.1.0",
+  "description": "入力してから新しいタブへ。既存のタブを維持する検索ランチャー。",
+  "minimum_chrome_version": "127",
+  "permissions": ["activeTab", "scripting", "search"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "New Tab Launcher", "default_popup": "popup.html" },
+  "commands": {
+    "open-launcher": {
+      "suggested_key": { "default": "Ctrl+Shift+Space", "mac": "Command+Shift+Space" },
+      "description": "検索バーを表示する"
+    }
+  }
+}
