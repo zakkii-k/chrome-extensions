@@ -73,7 +73,10 @@
   shadow.addEventListener("keydown", (event) => {
     // Keep page shortcuts from consuming text typed into the launcher.
     event.stopPropagation();
-    if (event.isComposing || composing || event.keyCode === 229) return;
+    if (event.isComposing || composing || event.keyCode === 229) {
+      if (event.key === "Enter") event.preventDefault();
+      return;
+    }
     if (event.key === "Escape") { event.preventDefault(); close(); }
     if (event.key === "Tab") {
       event.preventDefault();
