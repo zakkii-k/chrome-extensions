@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--output', type=Path, default=ROOT / 'dist')
     parser.add_argument('--tag')
     args = parser.parse_args()
-    names = args.extensions or sorted(path.parent.name for path in (ROOT / 'extensions').glob('*/src/manifest.json'))
+    names = args.extensions or sorted(path.parents[1].name for path in (ROOT / 'extensions').glob('*/src/manifest.json'))
     if not names:
         parser.error('No extensions found')
     if args.tag and len(names) != 1:

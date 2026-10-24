@@ -12,6 +12,13 @@ VERSION = json.loads((ROOT / 'extensions/new-tab-launcher/src/manifest.json').re
 
 
 class ReleasePackages(unittest.TestCase):
+    def test_all_extensions_are_discovered_without_arguments(self):
+        with tempfile.TemporaryDirectory() as folder:
+            subprocess.run([sys.executable, str(ROOT / 'scripts/package_extensions.py'),
+                            '--output', folder], check=True, capture_output=True)
+            self.assertTrue((Path(folder) / f'new-tab-launcher-{VERSION}-extension.zip').is_file())
+            self.assertTrue((Path(folder) / f'new-tab-launcher-{VERSION}-windows.zip').is_file())
+
     def test_release_archives_and_checksums(self):
         with tempfile.TemporaryDirectory() as folder:
             subprocess.run([sys.executable, str(ROOT / 'scripts/package_extensions.py'), 'new-tab-launcher',
