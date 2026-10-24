@@ -17,3 +17,8 @@
 - Chromiumで指定日経記事がfailure=false、記事見出し・本文を表示（会員制限は維持）。NHKニューストップもfailure=falseで見出しを表示。スクリーンショット /tmp/link-peek-nikkei-repro.png と /tmp/link-peek-nhk-repro.png。
 - npm test、全ブラウザ回帰テスト、Pythonパッケージテスト4件、ビルド、git diff --check成功。外部記事内の一部計測iframeは自身のCSPで引き続き拒否されるが、本文の表示は成功。Diaそのものは未検証。
 - Windowsの既存配置 C:\Users\zakki\AppData\Local\LinkPeek\extension へWSLからコピー、manifest 0.1.4を確認。適用には拡張と元ページの再読み込みが必要。
+
+## API制約・再設定の説明
+- 追加質問: なぜ部分削除できないか、事前取得して加工・再設定とは何か。
+- Chrome公開DNRの変更操作はヘッダー単位のremove/set/append。受信した値から特定ディレクティブだけを加工して返すコールバックはない。通常のMV3ではwebRequestBlockingも使えない（管理ポリシー配布は例外）。
+- 仮案の再設定とは、事前リクエストでCSPを取得しframe-ancestorsを除き、次回iframeリクエストに固定文字列としてsetすること。別応答でnonceがAAA→BBBと変われば、古いAAAを設定したヘッダーと新しいBBBを持つHTMLが不一致になる。同一応答のヘッダーと本文を扱えればこのnonce問題は生じないため、原理的不可能とは区別する。
