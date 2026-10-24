@@ -2,11 +2,19 @@
   "name": "chrome-extensions",
   "private": true,
   "type": "module",
-  "workspaces": ["extensions/*"],
-  "engines": { "node": ">=22" },
+  "workspaces": [
+    "extensions/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "package": "python3 scripts/package_extensions.py",
-    "check:packages": "python3 -m unittest discover -s scripts/tests -v"
+    "check:packages": "python3 -m unittest discover -s scripts/tests -v",
+    "test:browser": "npm run test:browser --workspaces --if-present"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
   }
 }

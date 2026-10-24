@@ -28,6 +28,13 @@ npm run package
 npm run check:packages
 ```
 
+検索UIのキー入力を検証するブラウザテストも実行できます。テスト専用Chromiumは利用者向けZIPには含まれません。
+
+```bash
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
 拡張を1つだけパッケージする場合：
 
 ```bash
