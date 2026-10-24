@@ -21,7 +21,7 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
 
    Gitでこのリポジトリを取得した場合は、`extensions/new-tab-launcher` フォルダ内で同じコマンドを実行できます。スクリプトはファイルを `%LOCALAPPDATA%\NewTabLauncher` へコピーするだけで、ソフトウェアのインストールや常駐起動は行いません。
 
-2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
+2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.1** と表示されることを確認します。
 3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
 4. `chrome://extensions/shortcuts`（Diaでは `dia://extensions/shortcuts`）で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
 5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。
@@ -73,3 +73,7 @@ npm test
 公式資料：[Scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting)、[Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs)、[Commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)、[Search API](https://developer.chrome.com/docs/extensions/reference/api/search)。
 
 [変更履歴](CHANGELOG.md) · [プライバシー](PRIVACY.md)
+
+## ページのショートカットとの分離
+
+検索欄はページ内の独立した拡張機能フレームに表示します。入力中のキーは背後のWebページへ伝わらず、Xのn等のページ側ショートカットを起動しません。Ctrl+C/V/A、削除、日本語変換は通常の入力欄として使用できます。Escで検索を閉じると元の入力位置に戻り、ページのショートカットも利用できます。ブラウザやOSが処理するショートカットを全面的に無効化する仕組みではありません。

@@ -7,7 +7,7 @@ export async function launch(api, commandTab) {
       [tab] = await api.tabs.query({ active: true, lastFocusedWindow: true });
     }
     if (!Number.isInteger(tab?.id) || tab.id < 0) throw new Error('No active tab returned by the browser');
-    await api.scripting.executeScript({ target: { tabId: tab.id }, files: ['launcher.js'] });
+    await api.scripting.executeScript({ target: { tabId: tab.id }, files: ['overlay.js'] });
     return { surface: 'overlay', failures };
   } catch (error) {
     failures.push({ stage: 'page-injection', message: String(error.message || error) });

@@ -14,7 +14,7 @@ function browser() {
 test('missing command tab is resolved before page injection',async()=>{
  const {api,calls}=browser();
  assert.equal((await launch(api)).surface,'overlay');
- assert.deepEqual(calls,[['query',{active:true,lastFocusedWindow:true}],['inject',{target:{tabId:4},files:['launcher.js']}]]);
+ assert.deepEqual(calls,[['query',{active:true,lastFocusedWindow:true}],['inject',{target:{tabId:4},files:['overlay.js']}]]);
 });
 test('valid command tab is injected without querying again',async()=>{
  const {api,calls}=browser();await launch(api,source);assert.equal(calls.length,1);

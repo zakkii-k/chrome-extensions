@@ -55,7 +55,7 @@ class ReleasePackages(unittest.TestCase):
                 self.assertNotIn('package.json', archive.namelist())
                 with tempfile.TemporaryDirectory() as extracted:
                     archive.extractall(extracted)
-                    for name in ('background.js', 'destination.js', 'launch.js', 'suggestions.js', 'launcher.js', 'popup.html', 'popup.css'):
+                    for name in ('background.js', 'destination.js', 'launch.js', 'suggestions.js', 'launcher.js', 'overlay.js', 'frame.html', 'popup.html', 'popup.css'):
                         self.assertTrue((Path(extracted) / name).is_file(), name)
             with ZipFile(output / f'new-tab-launcher-{VERSION}-windows.zip') as archive:
                 self.assertIsNone(archive.testzip())

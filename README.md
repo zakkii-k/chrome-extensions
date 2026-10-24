@@ -5,7 +5,7 @@ Chrome・DiaなどのChromiumブラウザ向け拡張機能を管理するリポ
 | 拡張 | 内容 | バージョン |
 | --- | --- | --- |
 | [Link Peek](extensions/link-peek/) | 外部リンクをページ内で一時表示し、拡大時だけタブへ移動 | 0.1.2（開発中） |
-| [New Tab Launcher](extensions/new-tab-launcher/) | ページ上で検索し、確定してから新規タブへ移動 | 0.2.0 |
+| [New Tab Launcher](extensions/new-tab-launcher/) | ページ上で検索し、確定してから新規タブへ移動 | 0.2.1（開発中） |
 
 ## ダウンロード
 
