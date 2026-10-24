@@ -20,3 +20,5 @@
 - Windows側の導入済みフォルダへ0.2.0をコピーし、廃止したwindow.htmlを削除した。既存のAutoHotkey設定は変更していない。
 
 - ユーザーよりDiaの拡張機能ページはdia://extensionsとの補足。Google上では検索欄が表示され、見た目は理想通り、検索も可能と報告。添付画像でもOSの別ウィンドウではないページ内オーバーレイと既存タブ候補を確認。Ctrl+TのAutoHotkey連携については、この報告だけでは確認済みと扱わない。
+
+- ユーザーがAutoHotkeyの代わりにPowerToysを使用できるか質問。Microsoft公式ドキュメントでKeyboard Managerのアプリ別ショートカット再マップを確認。Ctrl+T→Ctrl+Shift+SpaceをDia/Chromeごとに設定でき、PowerToysの起動中のみ有効。READMEに代替手順を追記。実際のPowerToys設定は変更していない。

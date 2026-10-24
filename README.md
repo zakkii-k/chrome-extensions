@@ -27,6 +27,19 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
 
 自動起動する場合は `Win+R` → `shell:startup` にAHKファイルのショートカットを置きます。終了は通知領域のAutoHotkeyアイコンからExit。終了すると標準のCtrl+Tに戻ります。
 
+## PowerToysでCtrl+Tを置き換える
+
+AutoHotkeyの代わりに、PowerToysのKeyboard Managerでも設定できます。「ショートカットの再マップ」で次の2行を追加します。
+
+| 入力 | 送信先 | 対象アプリ |
+| --- | --- | --- |
+| Ctrl+T | Ctrl+Shift+Space | dia.exe |
+| Ctrl+T | Ctrl+Shift+Space | chrome.exe |
+
+アプリ名は実行プロセス名を指定します。Diaのプロセス名が異なる場合はタスクマネージャーの「詳細」で確認してください。対象アプリを空欄にすると全アプリへ適用されます。PowerToysを起動してKeyboard Managerを有効にしている間だけ動作します。AutoHotkeyとの併用は不要です。
+
+[Microsoft公式手順](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager)
+
 ## 動作範囲
 
 HTTP/HTTPSのWebページ上には中央寄りのオーバーレイを表示します。Chrome/Diaの設定画面・組み込みの新しいタブ・Chromeウェブストアなど、ブラウザがスクリプト注入を禁止するページでは同じ表示を作れません。その場合はツールバーの拡張機能ポップアップを試します。Diaがそれも開けない場合は別ウィンドウを作らず、拡張機能アイコンに `!` を表示します。アイコンの手動クリックから利用してください。
