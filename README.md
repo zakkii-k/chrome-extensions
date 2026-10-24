@@ -1,69 +1,54 @@
-# New Tab Launcher
+# Chrome Extensions
 
-Ctrl+Tでページ上に検索欄を表示し、入力してから新規タブへ進むランチャーです。別のアプリウィンドウは開きません。
+Chrome・DiaなどのChromiumブラウザ向け拡張機能を管理するリポジトリです。拡張ごとにソース、テスト、ドキュメント、バージョンを分けて管理します。
 
-- 入力してEnter：同じURLのタブがあっても新規タブで検索・移動。
-- ↓／↑：候補を選択。検索候補は新規タブ、既存タブ候補を選んだ場合だけそのタブに切り替え。
-- Esc／背景クリック／ショートカット再入力：閉じる。
-- 日本語変換のEnter：変換確定のみ。次のEnterで実行。
-
-検索結果にはブラウザ既定の検索エンジンを使います。入力候補はGoogleのサジェストとローカルの既存タブから取得します。既存タブのタイトルやURLは外部へ送信しません。
-
-## Windowsで導入・更新
-
-Chrome 127以降、または対応するChromiumブラウザを使用します。ビルド・npm installは不要です。
-
-1. Windows PowerShellでファイルをコピーします。
-
-   ```powershell
-   powershell.exe -NoProfile -ExecutionPolicy Bypass -File "\\wsl.localhost\Ubuntu\home\zakki\product\chrome-extension\windows\prepare.ps1"
-   ```
-
-2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
-3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
-4. `chrome://extensions/shortcuts`（Diaでは `dia://extensions/shortcuts`）で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
-5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。
-6. Ctrl+Tにする場合、[AutoHotkey v2](https://www.autohotkey.com/)をインストールし、`%LOCALAPPDATA%\NewTabLauncher\launcher.ahk` を起動します。Diaでは先にプロセス名を確認し、スクリプトのDia用GroupAdd行を有効にしてください。
-
-自動起動する場合は `Win+R` → `shell:startup` にAHKファイルのショートカットを置きます。終了は通知領域のAutoHotkeyアイコンからExit。終了すると標準のCtrl+Tに戻ります。
-
-## PowerToysでCtrl+Tを置き換える
-
-AutoHotkeyの代わりに、PowerToysのKeyboard Managerでも設定できます。「ショートカットの再マップ」で次の2行を追加します。
-
-| 入力 | 送信先 | 対象アプリ |
+| 拡張 | 内容 | バージョン |
 | --- | --- | --- |
-| Ctrl+T | Ctrl+Shift+Space | dia.exe |
-| Ctrl+T | Ctrl+Shift+Space | chrome.exe |
+| [New Tab Launcher](extensions/new-tab-launcher/) | ページ上で検索し、確定してから新規タブへ移動 | 0.2.0 |
 
-アプリ名は実行プロセス名を指定します。Diaのプロセス名が異なる場合はタスクマネージャーの「詳細」で確認してください。対象アプリを空欄にすると全アプリへ適用されます。PowerToysを起動してKeyboard Managerを有効にしている間だけ動作します。AutoHotkeyとの併用は不要です。
+## ダウンロード
 
-[Microsoft公式手順](https://learn.microsoft.com/en-us/windows/powertoys/keyboard-manager)
+[GitHub Releases](https://github.com/zakkii-k/chrome-extensions/releases)から取得できます。現在は試用版をGitHubで配布しています。Chromeウェブストアでは公開していません。
 
-## 動作範囲
+- `new-tab-launcher-0.2.0-extension.zip`：拡張機能本体。展開したフォルダをブラウザに読み込みます。
+- `new-tab-launcher-0.2.0-windows.zip`：本体、導入手順、PowerShellコピー用スクリプト、任意のAutoHotkeyスクリプトを同梱。
+- `SHA256SUMS`：配布物のSHA-256チェックサム。
 
-HTTP/HTTPSのWebページ上には中央寄りのオーバーレイを表示します。Chrome/Diaの設定画面・組み込みの新しいタブ・Chromeウェブストアなど、ブラウザがスクリプト注入を禁止するページでは同じ表示を作れません。その場合はツールバーの拡張機能ポップアップを試します。Diaがそれも開けない場合は別ウィンドウを作らず、拡張機能アイコンに `!` を表示します。アイコンの手動クリックから利用してください。
-
-Diaでのページ内表示は0.2.0でサイト権限を付けて対応しました。ユーザーのDia実機でもGoogle上での表示・見た目・検索が確認済みです。すべてのブラウザ内部画面でもArcと同じ表示にするには、拡張機能APIを超えるOS側の表示機構が必要になります。この版には含みません。
-
-Macでも拡張機能本体は共用できます。内部ショートカットはCommand+Shift+Spaceです。Command+Tの変換は別途Mac側の設定が必要です。
-
-## 候補と権限
-
-- `tabs`：既存タブのタイトル・URLを候補表示し、明示選択時に切り替える。
-- `scripting`、HTTP/HTTPSのサイトアクセス：ページ上に入力UIを表示。Diaで一時的なactiveTab権限が使えない場合にも対応。
-- `search`：既定の検索エンジンで結果を開く。
-
-Googleのサジェスト取得には公開エンドポイントを利用します。公式の保証された拡張機能向けAPIではないため、利用できない場合もあります。入力を180ms遅延して取得し、通信時のCookieは送信しません。空入力、URL、メールアドレス形式、スキーム付き文字列は候補取得先へ送りません。検索語は入力途中からGoogleへ送信されます。候補取得に失敗しても検索と既存タブ候補は利用できます。アプリ内で入力履歴を保存しません。
-
-ローカル開発URLは `http://localhost:3000` のようにHTTPを明示してください。スキーム省略時はHTTPSです。
+Ctrl+Tへの割り当てはPowerToys等で別途設定します。拡張機能だけで使う場合はCtrl+Shift+Spaceです。詳しくは[導入手順](extensions/new-tab-launcher/README.md)を参照してください。
 
 ## 開発
 
+Node.js 22以降、npm、Python 3を使用します。Pythonは配布ZIPの生成と検証にのみ使用し、拡張機能の利用には不要です。
+
 ```bash
+npm ci
 npm test
+npm run package
+npm run check:packages
 ```
 
-実行時の外部ライブラリやサーバーは不要です。表示失敗時はservice workerの `Launcher display` または `Launcher could not open` から、ページ注入とツールバーポップアップの段階別情報を確認できます。ログに検索入力は出力しません。
+拡張を1つだけパッケージする場合：
 
-公式資料：[Scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting)、[Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs)、[Commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)、[Search API](https://developer.chrome.com/docs/extensions/reference/api/search)。
+```bash
+python3 scripts/package_extensions.py new-tab-launcher
+```
+
+ZIPは `dist/` に生成されます。拡張機能本体のZIP直下には `manifest.json` が入り、テストや開発用ファイルは含まれません。
+
+## 構成とリリース
+
+```text
+extensions/<extension-name>/
+  src/            拡張機能本体
+  tests/          自動テスト
+  windows/        Windows向け補助ツール（必要な拡張のみ）
+  README.md       導入手順
+  CHANGELOG.md    変更履歴
+  PRIVACY.md      入力やタブ情報の扱い
+scripts/          パッケージ生成と検証
+.github/workflows/ 自動テストと配布物の生成
+```
+
+バージョンは拡張ごとの `src/manifest.json` と `package.json` で合わせます。タグは `new-tab-launcher/v0.2.0` の形式です。タグをpushするとGitHub Actionsがテスト・ZIP生成を行い、配布物を含むドラフトリリースを作成します。内容確認後に公開します。
+
+独立した `.git` やGit submoduleは使いません。新しい拡張は `extensions/` に追加します。

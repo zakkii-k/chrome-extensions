@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { suggestions,tabSuggestions,switchTab } from '../extension/suggestions.js';
+import { suggestions,tabSuggestions,switchTab } from '../src/suggestions.js';
 const tabs=[
  {id:1,windowId:2,title:'東京の地図',url:'https://maps.google.com/',lastAccessed:30},
  {id:2,windowId:2,title:'東京 Wikipedia',url:'https://ja.wikipedia.org/',lastAccessed:50},

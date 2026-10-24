@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { destination, openDestination } from "../extension/destination.js";
+import { destination, openDestination } from "../src/destination.js";
 
 test("Japanese queries and non-web schemes are searches", () => {
   for (const text of ["東京 ランチ", "cats", "javascript:alert(1)", "file:///tmp/test", "chrome://settings", "user@example.com"]) {
@@ -47,7 +47,7 @@ test("browser failures propagate so the UI can offer retry", async () => {
   await assert.rejects(openDestination({ search: { query: async () => { throw new Error("offline"); } } }, "cats"), /offline/);
 });
 
-test("search from an input window creates a new tab in the source window", async () => {
+test("search creates a new tab in the source browser window", async () => {
   const created = [];
   const queries = [];
   const api = {

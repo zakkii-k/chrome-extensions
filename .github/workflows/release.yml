@@ -1,0 +1,28 @@
+name: Draft extension release
+on:
+  push:
+    tags: ['*/v*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check:packages
+      - name: Package the tagged extension
+        run: python3 scripts/package_extensions.py "${RELEASE_TAG%/v*}" --tag "$RELEASE_TAG"
+      - name: Create draft release and attach packages
+        run: |
+          gh release create "$RELEASE_TAG" dist/* --verify-tag --draft --prerelease \
+            --title "$RELEASE_TAG" --notes-file "extensions/${RELEASE_TAG%/v*}/CHANGELOG.md"

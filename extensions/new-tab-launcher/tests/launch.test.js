@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { launch } from '../extension/launch.js';
+import { launch } from '../src/launch.js';
 const source = { id:4,windowId:2 };
 function browser() {
  const calls=[];

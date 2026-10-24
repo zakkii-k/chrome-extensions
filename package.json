@@ -1,9 +1,12 @@
 {
-  "name": "new-tab-launcher",
-  "version": "0.2.0",
+  "name": "chrome-extensions",
   "private": true,
   "type": "module",
+  "workspaces": ["extensions/*"],
+  "engines": { "node": ">=22" },
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "npm run test --workspaces --if-present",
+    "package": "python3 scripts/package_extensions.py",
+    "check:packages": "python3 -m unittest discover -s scripts/tests -v"
   }
 }
