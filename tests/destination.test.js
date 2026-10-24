@@ -55,7 +55,7 @@ test("search from an input window creates a new tab in the source window", async
     search: { query: async (options) => queries.push(options) }
   };
   await openDestination(api, "東京 ランチ", { id: 7, windowId: 3 });
-  assert.deepEqual(created, [{ windowId: 3, active: true, openerTabId: 7 }]);
+  assert.deepEqual(created, [{ url: "about:blank", windowId: 3, active: true, openerTabId: 7 }]);
   assert.deepEqual(queries, [{ text: "東京 ランチ", tabId: 50 }]);
 });
 

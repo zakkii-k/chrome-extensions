@@ -29,7 +29,7 @@ export async function openDestination(api, input, sourceTab) {
   if (target.kind === "search") {
     if (Number.isInteger(sourceTab?.windowId)) {
       // A dedicated input window must never receive the resulting search tab.
-      const options = { windowId: sourceTab.windowId, active: true };
+      const options = { url: "about:blank", windowId: sourceTab.windowId, active: true };
       if (Number.isInteger(sourceTab.id)) options.openerTabId = sourceTab.id;
       const tab = await api.tabs.create(options);
       try {
