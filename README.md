@@ -1,68 +1,56 @@
 # New Tab Launcher
 
-Ctrl+Tで入力バーを表示し、Enterで確定してから新しいタブを開くChrome拡張機能です。同じ検索結果・URLが開いていても、既存タブへの切り替えは行いません。元のタブは維持します。
+Ctrl+Tでページ上に検索欄を表示し、入力してから新規タブへ進むランチャーです。別のアプリウィンドウは開きません。
 
-## Windowsで使う
+- 入力してEnter：同じURLのタブがあっても新規タブで検索・移動。
+- ↓／↑：候補を選択。検索候補は新規タブ、既存タブ候補を選んだ場合だけそのタブに切り替え。
+- Esc／背景クリック／ショートカット再入力：閉じる。
+- 日本語変換のEnter：変換確定のみ。次のEnterで実行。
 
-Chrome 127以降、[AutoHotkey v2](https://www.autohotkey.com/)を使用します。拡張機能はビルド・npm install不要です。
+検索結果にはブラウザ既定の検索エンジンを使います。入力候補はGoogleのサジェストとローカルの既存タブから取得します。既存タブのタイトルやURLは外部へ送信しません。
 
-1. WSL内のファイルをWindowsから使える場所へコピーします。Windows PowerShellで次を実行してください。
+## Windowsで導入・更新
+
+Chrome 127以降、または対応するChromiumブラウザを使用します。ビルド・npm installは不要です。
+
+1. Windows PowerShellでファイルをコピーします。
 
    ```powershell
    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "\\wsl.localhost\Ubuntu\home\zakki\product\chrome-extension\windows\prepare.ps1"
    ```
 
-   コピー先は `%LOCALAPPDATA%\NewTabLauncher` です。以後コードを変更した場合も、このコマンドで再コピーしてから拡張機能を再読み込みしてください。
+2. `chrome://extensions`（Diaでは拡張機能一覧）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
+3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
+4. `chrome://extensions/shortcuts` で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
+5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。
+6. Ctrl+Tにする場合、[AutoHotkey v2](https://www.autohotkey.com/)をインストールし、`%LOCALAPPDATA%\NewTabLauncher\launcher.ahk` を起動します。Diaでは先にプロセス名を確認し、スクリプトのDia用GroupAdd行を有効にしてください。
 
-2. Chromeの `chrome://extensions` を開き、「デベロッパーモード」を有効にします。
-3. 「パッケージ化されていない拡張機能を読み込む」で `%LOCALAPPDATA%\NewTabLauncher\extension` を選択します。`extension` フォルダ自体を選びます。
-4. `chrome://extensions/shortcuts` を開き、New Tab Launcherの「検索バーを表示する」を **Ctrl+Shift+Space** に設定します。対象は **Chrome内** にしてください。
-5. まずCtrl+Shift+Spaceで検索バーが開くことを確認します。拡張機能アイコンのクリックでも入力できます。
-6. AutoHotkey v2をインストールし、`%LOCALAPPDATA%\NewTabLauncher\launcher.ahk` をダブルクリックします。
-7. ChromeでCtrl+Tを押します。以後は検索バーが開き、Enterで新規タブへ進みます。
+自動起動する場合は `Win+R` → `shell:startup` にAHKファイルのショートカットを置きます。終了は通知領域のAutoHotkeyアイコンからExit。終了すると標準のCtrl+Tに戻ります。
 
-任意で `Win+R` → `shell:startup` に `launcher.ahk` のショートカットを置けば、ログイン時にキー変換が有効になります。終了するときは通知領域のAutoHotkeyアイコンからExitを選択してください。終了すると標準のCtrl+Tに戻ります。Chrome以外のアプリのCtrl+Tは変更しません。
+## 動作範囲
 
-## 操作
+HTTP/HTTPSのWebページ上には中央寄りのオーバーレイを表示します。Chrome/Diaの設定画面・組み込みの新しいタブ・Chromeウェブストアなど、ブラウザがスクリプト注入を禁止するページでは同じ表示を作れません。その場合はツールバーの拡張機能ポップアップを試します。Diaがそれも開けない場合は別ウィンドウを作らず、拡張機能アイコンに `!` を表示します。アイコンの手動クリックから利用してください。
 
-- 検索語を入力してEnter：ブラウザ既定の検索エンジンを使い、新しいタブで検索。
-- `example.com` や `https://example.com/path` を入力してEnter：新しいタブでURLを開く。スキーム省略時はHTTPS。
-- ローカル開発用URLは `http://localhost:3000` のようにHTTPを明示してください。
-- Esc／背景クリック：タブを増やさず閉じ、ページの元の入力位置へ戻る。
-- Ctrl+Tを再度押す：ページ内の検索バーを閉じる。
-- 日本語の変換確定中のEnter：検索は実行しない。変換確定後、もう一度Enterで開く。
+Diaでのページ内表示は0.2.0でサイト権限を付けて対応しました。ユーザーのDia実機での最終確認は必要です。すべてのブラウザ内部画面でもArcと同じ表示にするには、拡張機能APIを超えるOS側の表示機構が必要になります。この版には含みません。
 
-通常のWebページでは中央寄りのオーバーレイを表示します。`chrome://`、新しいタブ、Chromeウェブストア、PDFなど拡張機能が注入できないページでは、ツールバーのポップアップに切り替えます。この場合も入力確定前にタブは作りません。アイコンをツールバーへ固定すると見つけやすくなります。
+Macでも拡張機能本体は共用できます。内部ショートカットはCommand+Shift+Spaceです。Command+Tの変換は別途Mac側の設定が必要です。
 
-Diaなどでツールバーのポップアップも開けない場合、0.1.1以降は小さな入力用ウィンドウを表示します。Escで閉じると元のブラウザウィンドウにはタブが増えません。Enterで確定すると元のブラウザウィンドウに新規タブを開き、入力用ウィンドウを閉じます。元のウィンドウを先に閉じてしまった場合は、検索を実行せずエラーを表示します。
+## 候補と権限
 
-### 検索バーが出ない場合
+- `tabs`：既存タブのタイトル・URLを候補表示し、明示選択時に切り替える。
+- `scripting`、HTTP/HTTPSのサイトアクセス：ページ上に入力UIを表示。Diaで一時的なactiveTab権限が使えない場合にも対応。
+- `search`：既定の検索エンジンで結果を開く。
 
-1. コピー用PowerShellを再実行し、拡張機能一覧でNew Tab Launcherを再読み込みします。バージョンが **0.1.1** になったことを確認します。
-2. 拡張機能のショートカット設定でCtrl+Shift+Spaceが割り当てられ、対象がブラウザ内であることを確認します。
-3. 通常のWebページでCtrl+Shift+Spaceを押します。中央のバー、ツールバーのポップアップ、小さな入力用ウィンドウの順で表示を試みます。
-4. どれも表示されない場合、拡張機能のエラー詳細に出る `Launcher could not open` の全文を確認します。`page-injection`、`toolbar-popup`、`input-window` ごとの理由が含まれます。
+Googleのサジェスト取得には公開エンドポイントを利用します。公式の保証された拡張機能向けAPIではないため、利用できない場合もあります。入力を180ms遅延して取得し、通信時のCookieは送信しません。空入力、URL、メールアドレス形式、スキーム付き文字列は候補取得先へ送りません。検索語は入力途中からGoogleへ送信されます。候補取得に失敗しても検索と既存タブ候補は利用できます。アプリ内で入力履歴を保存しません。
 
-表示に成功した場合も、拡張機能のservice workerのコンソールで `Launcher display` を確認すると、使用した表示方法と、それ以前の失敗理由を確認できます。ログに検索入力そのものは含めません。
+ローカル開発URLは `http://localhost:3000` のようにHTTPを明示してください。スキーム省略時はHTTPSです。
 
-## DiaとMac
-
-検索UI・URL判定・タブ生成はOSに依存しません。Mac用の内部ショートカットはCommand+Shift+Spaceです。Command+Tの置換には、Mac側でアプリ単位のキーマッピングを別途用意する必要があります。Mac用キー変換はこの版に含みません。
-
-Diaへの導入は、その環境がChrome互換拡張機能と必要なAPIを提供する場合に限ります。Diaの実機検証は未実施です。WindowsでDiaを利用でき、プロセス名が `dia.exe` であると確認できた場合は、拡張機能の導入・ショートカット設定後に `launcher.ahk` のDia用GroupAdd行を有効にしてください。Chrome以外も、まず拡張機能単独の動作確認をしてからキー変換対象に追加してください。
-
-## 開発と権限
+## 開発
 
 ```bash
 npm test
 ```
 
-実行時の依存ライブラリ、サーバー、外部への入力候補取得、履歴保存はありません。検索確定時には通常のブラウザ検索と同様に、入力が既定の検索プロバイダーに渡ります。
+実行時の外部ライブラリやサーバーは不要です。表示失敗時はservice workerの `Launcher display` または `Launcher could not open` から、ページ注入とツールバーポップアップの段階別情報を確認できます。ログに検索入力は出力しません。
 
-- `activeTab`：ショートカットを押したページへの一時的なアクセス。
-- `scripting`：ページ内に検索バーを表示。
-- `search`：既定の検索エンジンを使用。
-
-常時全サイトへのアクセス権、タブ一覧・閲覧履歴の読み取り権限は要求しません。ショートカットの置換は拡張機能ではなくWindows側のAutoHotkeyが担当します。
-
-公式資料：[Commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)、[Search API](https://developer.chrome.com/docs/extensions/reference/api/search)、[Action API](https://developer.chrome.com/docs/extensions/reference/api/action)、[AutoHotkey v2](https://www.autohotkey.com/docs/v2/)。
+公式資料：[Scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting)、[Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs)、[Commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)、[Search API](https://developer.chrome.com/docs/extensions/reference/api/search)。
