@@ -1,4 +1,4 @@
-import { webUrl, frameRule } from './policy.js';
+import { webUrl, frameRule, previewDestination } from './policy.js';
 const key = tabId => `peek:${tabId}`;
 const queues = new Map();
 function queued(tabId, operation) {
@@ -56,13 +56,14 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       const url = webUrl(message.url);
       if (!url || typeof message.token !== 'string' || !/^[\w-]{20,80}$/.test(message.token)) throw new Error('Invalid preview');
       await release(tabId);
+      const destination = await previewDestination(url);
       const ruleId = await grantFrame(tabId);
-      try { await save(tabId,{token:message.token,url,viewerFrameId:sender.frameId,childFrameId:null,ruleId}); }
+      try { await save(tabId,{token:message.token,url:destination,viewerFrameId:sender.frameId,childFrameId:null,ruleId}); }
       catch (error) {
         await updateRules(() => chrome.declarativeNetRequest.updateSessionRules({removeRuleIds:[ruleId]}));
         throw error;
       }
-      return {ok:true};
+      return {ok:true,url:destination};
     });
   } else if (message?.type === 'peek:unregister' && sender.frameId === 0) {
     operation = queued(tabId, async () => {
@@ -91,9 +92,9 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       const value = await record(tabId);
       const url = webUrl(message.url);
       if (value && url && await withinPreview(tabId,sender.frameId,value)) {
-        value.url = url;
+        value.url = await previewDestination(url);
         await save(tabId,value);
-        await chrome.runtime.sendMessage({type:'peek:navigate',token:value.token,url});
+        await chrome.runtime.sendMessage({type:'peek:navigate',token:value.token,url:value.url});
       }
       return {ok:true};
     });
@@ -132,6 +133,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
   }).catch(() => {});
 });
 chrome.webNavigation.onErrorOccurred.addListener(details => {
+  if (details.error === 'net::ERR_ABORTED') return;
   queued(details.tabId, async () => {
     const value = await record(details.tabId);
     if (value && (details.parentFrameId === value.viewerFrameId || details.frameId === value.childFrameId)) {

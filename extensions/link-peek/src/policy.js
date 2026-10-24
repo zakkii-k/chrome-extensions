@@ -22,3 +22,45 @@ export function frameRule(id, tabId, extensionId) {
     condition:{tabIds:[tabId],initiatorDomains:[extensionId],resourceTypes:['sub_frame']}
   };
 }
+
+export function shortLinkTarget(html, base) {
+  const decode = text => text.replace(/&(?:amp|quot|apos|lt|gt|#\d+|#x[\da-f]+);/gi, entity => {
+    const name=entity.slice(1,-1).toLowerCase();
+    const named={amp:'&',quot:'"',apos:"'",lt:'<',gt:'>'};
+    if (named[name]) return named[name];
+    const point=name.startsWith('#x')?parseInt(name.slice(2),16):parseInt(name.slice(1),10);
+    return point>0 && point<=0x10ffff ? String.fromCodePoint(point) : '';
+  });
+  for (const tag of html.slice(0,65536).match(/<meta\b[^>]*>/gi) || []) {
+    const attributes={};
+    for (const match of tag.matchAll(/([\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g)) {
+      attributes[match[1].toLowerCase()]=match[2]??match[3]??match[4];
+    }
+    if (attributes['http-equiv']?.toLowerCase() !== 'refresh') continue;
+    const target=attributes.content?.match(/^\s*[\d.]+\s*;\s*url\s*=\s*(.*?)\s*$/i)?.[1];
+    const url=target && webUrl(decode(target).replace(/^['"]|['"]$/g,''),base);
+    if (url) return url;
+  }
+  // Parse a JSON string literal only. Never execute the redirect script.
+  const literal=html.slice(0,65536).match(/(?:window\.)?location\.replace\s*\(\s*("(?:[^"\\]|\\.)*")\s*\)/)?.[1];
+  try { return literal ? webUrl(JSON.parse(literal),base) : null; } catch { return null; }
+}
+
+// Resolve t.co's HTTP or HTML redirect before creating the frame, so the
+// extension remains initiator. Never execute downloaded JavaScript.
+export async function previewDestination(value, request = fetch) {
+  const original = webUrl(value);
+  if (!original || new URL(original).hostname !== 't.co') return original;
+  try {
+    const response = await request(original, {
+      method:'GET', redirect:'follow', credentials:'omit', cache:'no-store',
+      referrerPolicy:'no-referrer', signal:AbortSignal.timeout(7000)
+    });
+    const resolved=webUrl(response.url);
+    if (resolved && new URL(resolved).hostname !== 't.co') {
+      await response.body?.cancel();
+      return resolved;
+    }
+    return shortLinkTarget(await response.text(),original) || original;
+  } catch { return original; }
+}

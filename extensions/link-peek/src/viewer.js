@@ -29,7 +29,7 @@ window.addEventListener('message',async event => {
   const result = await chrome.runtime.sendMessage({type:'peek:register',token:configuration.token,url}).catch(() => null);
   if (!result?.ok) { state('blocked'); return; }
   state('loading');
-  frame.src = url;
+  frame.src = webUrl(result.url) || url;
 });
 document.querySelector('button').addEventListener('click',() => tellParent('peek:expand-request'));
 window.addEventListener('keydown',event => {
