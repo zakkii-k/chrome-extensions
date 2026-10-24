@@ -19,9 +19,9 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "\\wsl.localhost\Ubuntu\home\zakki\product\chrome-extension\windows\prepare.ps1"
    ```
 
-2. `chrome://extensions`（Diaでは拡張機能一覧）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
+2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
 3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
-4. `chrome://extensions/shortcuts` で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
+4. `chrome://extensions/shortcuts`（Diaでは `dia://extensions/shortcuts`）で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
 5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。
 6. Ctrl+Tにする場合、[AutoHotkey v2](https://www.autohotkey.com/)をインストールし、`%LOCALAPPDATA%\NewTabLauncher\launcher.ahk` を起動します。Diaでは先にプロセス名を確認し、スクリプトのDia用GroupAdd行を有効にしてください。
 
@@ -31,7 +31,7 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
 
 HTTP/HTTPSのWebページ上には中央寄りのオーバーレイを表示します。Chrome/Diaの設定画面・組み込みの新しいタブ・Chromeウェブストアなど、ブラウザがスクリプト注入を禁止するページでは同じ表示を作れません。その場合はツールバーの拡張機能ポップアップを試します。Diaがそれも開けない場合は別ウィンドウを作らず、拡張機能アイコンに `!` を表示します。アイコンの手動クリックから利用してください。
 
-Diaでのページ内表示は0.2.0でサイト権限を付けて対応しました。ユーザーのDia実機での最終確認は必要です。すべてのブラウザ内部画面でもArcと同じ表示にするには、拡張機能APIを超えるOS側の表示機構が必要になります。この版には含みません。
+Diaでのページ内表示は0.2.0でサイト権限を付けて対応しました。ユーザーのDia実機でもGoogle上での表示・見た目・検索が確認済みです。すべてのブラウザ内部画面でもArcと同じ表示にするには、拡張機能APIを超えるOS側の表示機構が必要になります。この版には含みません。
 
 Macでも拡張機能本体は共用できます。内部ショートカットはCommand+Shift+Spaceです。Command+Tの変換は別途Mac側の設定が必要です。
 
