@@ -1,2 +1,1 @@
-html, body { margin: 0; width: 560px; min-height: 170px; background: #17191e; }
-html[data-launcher-window], html[data-launcher-window] body { width: 100%; min-height: 100vh; }
+html, body { margin:0; width:640px; min-height:74px; background:#fff; }
