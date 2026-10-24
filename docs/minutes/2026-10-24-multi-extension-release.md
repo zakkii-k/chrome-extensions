@@ -9,3 +9,10 @@
 
 - ユーザーが公開リポジトリでの作成・GitHubリリースの実行を了承。ストア公開は保留。gh CLIの認証はネットワーク制約外で有効と確認でき、ブラウザ認証は不要。
 - chore/monorepo-first-releaseでフォルダを拡張単位へ整理。旧windows/prepare.ps1は互換呼び出しとして残す。GitHub用の導入手順・CHANGELOG・PRIVACYを作成。独自のライセンス付与はユーザー未指定のため追加しない。
+
+- 拡張をextensions/new-tab-launcherへ移動し、npm workspacesを設定。Python標準ライブラリによる拡張別ZIP生成、チェックサム、CI、タグpush時のドラフトリリース作成を追加。
+- ローカルの拡張テスト20件、配布ZIPの統合テスト3件、配布ZIPからのChromium操作テストが通過。Windowsの新しいprepare.ps1も実行確認済み。
+- 初回CIでは拡張の一括検出がsrcを拡張名と取り違える不具合を検出。fix/package-autodiscoveryで修正と回帰テストを追加し、mainへfast-forward反映。修正後のGitHub CIは成功。
+- https://github.com/zakkii-k/chrome-extensions をpublicで作成し、mainをpush。リリースタグnew-tab-launcher/v0.2.0を作成。GitHub Actionsがドラフトと本体ZIP・Windows用ZIP・SHA256SUMSを生成。添付物を取得しチェックサム・内容を検証してから、公開済み試用版へ変更した。
+- 公開URL：https://github.com/zakkii-k/chrome-extensions/releases/tag/new-tab-launcher/v0.2.0
+- gh認証が利用できたためブラウザ操作は不要。Chromeウェブストアには公開していない。
