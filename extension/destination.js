@@ -27,7 +27,21 @@ export function destination(input) {
 export async function openDestination(api, input, sourceTab) {
   const target = destination(input);
   if (target.kind === "search") {
-    await api.search.query({ text: target.text, disposition: "NEW_TAB" });
+    if (Number.isInteger(sourceTab?.windowId)) {
+      // A dedicated input window must never receive the resulting search tab.
+      const options = { windowId: sourceTab.windowId, active: true };
+      if (Number.isInteger(sourceTab.id)) options.openerTabId = sourceTab.id;
+      const tab = await api.tabs.create(options);
+      try {
+        await api.search.query({ text: target.text, tabId: tab.id });
+      } catch (error) {
+        // Roll back only the new empty tab created by this submission.
+        await api.tabs.remove(tab.id).catch(() => {});
+        throw error;
+      }
+    } else {
+      await api.search.query({ text: target.text, disposition: "NEW_TAB" });
+    }
   } else {
     const options = { url: target.url, active: true };
     if (sourceTab?.id !== undefined) options.openerTabId = sourceTab.id;

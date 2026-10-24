@@ -6,6 +6,7 @@
   }
   const popup = document.documentElement.hasAttribute("data-launcher-popup") &&
     location.protocol === "chrome-extension:";
+  const standalone = popup && document.documentElement.hasAttribute("data-launcher-window");
   const previousFocus = document.activeElement;
   const host = document.createElement("div");
   host.style.cssText = "all:initial!important;position:fixed!important;inset:0!important;z-index:2147483647!important;";
@@ -37,12 +38,14 @@
       kbd { font:inherit; color:#d6dae5; }
       .popup { position:relative; padding:0; background:transparent; }
       .popup .panel { width:560px; border:0; border-radius:0; box-shadow:none; }
+      .standalone { padding:20px; align-items:center; background:#17191e; }
+      .standalone .panel { box-shadow:none; }
       @media (max-width:480px) { .panel { padding:18px; } input { font-size:18px; }
         .footer { align-items:flex-start; } .footer span { max-width:180px; line-height:1.6; } }
       @media (prefers-reduced-motion:no-preference) { .panel { animation:appear .12s ease-out; }
         @keyframes appear { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } } }
     </style>
-    <div class="backdrop ${popup ? "popup" : ""}">
+    <div class="backdrop ${standalone ? "standalone" : popup ? "popup" : ""}">
       <section class="panel" role="dialog" aria-modal="true" aria-label="新しいタブで検索">
         <form>
           <label class="label" for="query">新しいタブで検索</label>

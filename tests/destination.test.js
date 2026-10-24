@@ -46,3 +46,28 @@ test("search explicitly requests NEW_TAB every time", async () => {
 test("browser failures propagate so the UI can offer retry", async () => {
   await assert.rejects(openDestination({ search: { query: async () => { throw new Error("offline"); } } }, "cats"), /offline/);
 });
+
+test("search from an input window creates a new tab in the source window", async () => {
+  const created = [];
+  const queries = [];
+  const api = {
+    tabs: { create: async (options) => { created.push(options); return { id: 50 }; } },
+    search: { query: async (options) => queries.push(options) }
+  };
+  await openDestination(api, "東京 ランチ", { id: 7, windowId: 3 });
+  assert.deepEqual(created, [{ windowId: 3, active: true, openerTabId: 7 }]);
+  assert.deepEqual(queries, [{ text: "東京 ランチ", tabId: 50 }]);
+});
+
+test("search failure removes only the newly created empty tab", async () => {
+  const removed = [];
+  const api = {
+    tabs: {
+      create: async () => ({ id: 50 }),
+      remove: async (id) => removed.push(id)
+    },
+    search: { query: async () => { throw new Error("Search unavailable"); } }
+  };
+  await assert.rejects(openDestination(api, "test query", { id: 7, windowId: 3 }), /Search unavailable/);
+  assert.deepEqual(removed, [50]);
+});
