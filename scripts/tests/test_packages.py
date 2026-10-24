@@ -33,7 +33,7 @@ class ReleasePackages(unittest.TestCase):
                 self.assertIsNone(archive.testzip())
                 manifest = json.loads(archive.read('manifest.json'))
                 self.assertEqual(manifest['name'], 'Link Peek')
-                for filename in ['content.js', 'background.js', 'policy.js', 'viewer.html', 'viewer.js', 'viewer.css']:
+                for filename in ['content.js', 'background.js', 'policy.js', 'runtime.js', 'viewer.html', 'viewer.js', 'viewer.css']:
                     self.assertIn(filename, archive.namelist())
                 self.assertNotIn('tests/policy.test.js', archive.namelist())
             with ZipFile(Path(folder) / f'link-peek-{version}-windows.zip') as archive:

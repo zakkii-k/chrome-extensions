@@ -1,31 +1,35 @@
 (async () => {
   const {previewLink,webUrl} = await import(chrome.runtime.getURL('policy.js'));
+  const {createMessenger} = await import(chrome.runtime.getURL('runtime.js'));
+  let dispose = () => {};
+  const messaging = createMessenger(chrome.runtime, () => dispose());
   const extensionOrigin = chrome.runtime.getURL('').replace(/\/$/,'');
   const previewChild = window.top !== window && [...location.ancestorOrigins].includes(extensionOrigin);
   if (window.top !== window) {
     if (!previewChild) return;
     window.addEventListener('keydown',event => {
-      if (event.key === 'Escape' && !event.isComposing) {
+      if (messaging.alive() && event.key === 'Escape' && !event.isComposing) {
         event.preventDefault();
-        chrome.runtime.sendMessage({type:'peek:close-child'}).catch(() => {});
+        messaging.send({type:'peek:close-child'});
       }
     },true);
     // Let the extension frame initiate navigation, keeping the temporary header
     // exception scoped to this preview instead of other frames on the page.
     window.addEventListener('click',event => {
-      if (event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      if (!messaging.alive() || event.button || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
       const anchor = event.composedPath().find(node => node instanceof HTMLAnchorElement);
       const url = anchor && !anchor.hasAttribute('download') && webUrl(anchor.href,location.href);
       if (url && (!new URL(url).hash || url.split('#')[0] !== location.href.split('#')[0])) {
         event.preventDefault();event.stopImmediatePropagation();
-        chrome.runtime.sendMessage({type:'peek:navigate-child',url}).catch(() => {});
+        messaging.send({type:'peek:navigate-child',url});
       }
     },true);
     return;
   }
   let enabled = true;
   let current;
-  const configuration = await chrome.runtime.sendMessage({type:'peek:config'}).catch(() => null);
+  const configuration = await messaging.send({type:'peek:config'});
+  if (!messaging.alive()) return;
   if (configuration?.ok) enabled = configuration.enabled;
   const closeIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>';
   const expandIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7"/></svg>';
@@ -38,19 +42,20 @@
     document.documentElement.style.setProperty('overflow',state.overflow,state.priority);
     if (!state.overflow) document.documentElement.style.removeProperty('overflow');
     if (state.previousFocus?.isConnected) state.previousFocus.focus({preventScroll:true});
-    chrome.runtime.sendMessage({type:'peek:unregister',token:state.token}).catch(() => {});
+    messaging.send({type:'peek:unregister',token:state.token});
   }
+  dispose = () => {enabled=false;close();};
   async function expand() {
     const state=current;
     if (!state || state.pending) return;
     state.pending=true;
     state.expand.disabled=true;
-    const result=await chrome.runtime.sendMessage({type:'peek:expand',token:state.token,url:state.url}).catch(() => null);
+    const result=await messaging.send({type:'peek:expand',token:state.token,url:state.url});
     if (current !== state) return;
     if (result?.ok) close();
     else { state.pending=false;state.expand.disabled=false;state.expand.title='開けませんでした。もう一度お試しください'; }
   }
-  function open(url,anchor) {
+  function open(url,anchor,viewerUrl) {
     close();
     const host=document.createElement('div');
     host.style.cssText='all:initial!important;position:fixed!important;inset:0!important;z-index:2147483647!important;';
@@ -94,7 +99,7 @@
     (document.body || document.documentElement).append(host);
     document.documentElement.style.setProperty('overflow','hidden');
     state.dialog.showModal();
-    state.frame.src=chrome.runtime.getURL('viewer.html');
+    state.frame.src=viewerUrl;
     shadow.querySelector('.close').focus({preventScroll:true});
     // If the source site's policy blocks even the extension frame, keep the
     // expand button available; do not silently open a browser tab.
@@ -103,12 +108,14 @@
     },15000);
   }
   window.addEventListener('click',event=>{
-    if (!enabled || current) return;
+    if (!messaging.alive() || !enabled || current) return;
     const anchor=event.composedPath().find(node=>node instanceof HTMLAnchorElement);
     if (!anchor) return;
     const url=previewLink(event,{href:anchor.href,download:anchor.hasAttribute('download'),target:anchor.target},location.href);
     if (!url) return;
-    event.preventDefault();event.stopImmediatePropagation();open(url,anchor);
+    const viewerUrl=messaging.resource('viewer.html');
+    if (!viewerUrl) return;
+    event.preventDefault();event.stopImmediatePropagation();open(url,anchor,viewerUrl);
   },true);
   chrome.runtime.onMessage.addListener(message=>{
     if (message?.type==='peek:close' && current?.token===message.token) close();

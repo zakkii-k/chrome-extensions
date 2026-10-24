@@ -21,7 +21,7 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
 
    Gitでこのリポジトリを取得した場合は、`extensions/new-tab-launcher` フォルダ内で同じコマンドを実行できます。スクリプトはファイルを `%LOCALAPPDATA%\NewTabLauncher` へコピーするだけで、ソフトウェアのインストールや常駐起動は行いません。
 
-2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.1** と表示されることを確認します。
+2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.2** と表示されることを確認します。
 3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
 4. `chrome://extensions/shortcuts`（Diaでは `dia://extensions/shortcuts`）で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
 5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。

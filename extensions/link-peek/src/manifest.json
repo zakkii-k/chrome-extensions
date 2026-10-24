@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Link Peek",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "外部リンクをページ上で一時表示。拡大したときだけ新しいタブへ。",
   "minimum_chrome_version": "127",
   "permissions": [
@@ -39,7 +39,8 @@
         "viewer.html",
         "viewer.js",
         "viewer.css",
-        "policy.js"
+        "policy.js",
+        "runtime.js"
       ],
       "matches": [
         "http://*/*",
