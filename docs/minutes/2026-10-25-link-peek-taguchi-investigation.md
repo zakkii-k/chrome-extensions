@@ -11,3 +11,9 @@
 - Browser plugin not available のため既存のPlaywright/Chromiumで拡張を起動し検証。リンククリック→viewer.html→日経iframeの順で、net::ERR_BLOCKED_BY_RESPONSE、failure=trueを再現。自動で新規タブは生成されなかった。
 - 現行のX-Frame-Options除去ではCSPの埋め込み禁止は解除されない。日経のプレビュー不可はこの方式の制限。新規タブになる現象とは区別する。
 - CSP全削除は他の保護も削るため、この調査では実装変更をしていない。
+
+## NHK・理由判別・Arcについての追加質問
+- NHKニュース https://news.web.nhk/newsweb の200応答を確認。CSP frame-ancestorsはselfとNHKのドメインのみを許可しており、現行のX上プレビューは許可されない。全記事を検証したわけではない。
+- 原因分類はwebRequestの応答ヘッダー監視（権限追加）とwebNavigation失敗イベントの突き合わせで精度を上げられる。ただしERR_BLOCKED_BY_RESPONSE単体からCSP拒否を断定できず、一般読み込み失敗・タイムアウト・原因不明も残す設計が必要。
+- Arc公式はPeekをタブのプレビューとして説明。内部実装は公開説明だけでは断定せず、ブラウザ本体はページ内iframeとは別の表示面を提供できるため、埋め込み禁止とは別条件になると説明する。
+- 今回は説明依頼であり実装変更なし。
