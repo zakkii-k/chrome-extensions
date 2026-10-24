@@ -48,9 +48,28 @@ export function shortLinkTarget(html, base) {
 
 // Resolve t.co's HTTP or HTML redirect before creating the frame, so the
 // extension remains initiator. Never execute downloaded JavaScript.
-export async function previewDestination(value, request = fetch) {
+const destinationCaches = new WeakMap();
+const destinationTtl = 5 * 60 * 1000;
+const destinationLimit = 64;
+
+export async function previewDestination(value, request = fetch, now = Date.now) {
   const original = webUrl(value);
   if (!original || new URL(original).hostname !== 't.co') return original;
+  let cache=destinationCaches.get(request);
+  if (!cache) {cache=new Map();destinationCaches.set(request,cache);}
+  const time=now();
+  for (const [url,entry] of cache) if (entry.expires <= time) cache.delete(url);
+  const cached=cache.get(original);
+  if (cached) return cached.promise;
+  while (cache.size >= destinationLimit) cache.delete(cache.keys().next().value);
+  const entry={promise:resolveDestination(original,request),expires:time+destinationTtl};
+  cache.set(original,entry);
+  const destination=await entry.promise;
+  if (destination === original && cache.get(original) === entry) cache.delete(original);
+  return destination;
+}
+
+async function resolveDestination(original, request) {
   try {
     const response = await request(original, {
       method:'GET', redirect:'follow', credentials:'omit', cache:'no-store',

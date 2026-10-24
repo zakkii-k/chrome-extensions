@@ -56,8 +56,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       const url = webUrl(message.url);
       if (!url || typeof message.token !== 'string' || !/^[\w-]{20,80}$/.test(message.token)) throw new Error('Invalid preview');
       await release(tabId);
-      const destination = await previewDestination(url);
-      const ruleId = await grantFrame(tabId);
+      const [destination,ruleId] = await Promise.all([previewDestination(url),grantFrame(tabId)]);
       try { await save(tabId,{token:message.token,url:destination,viewerFrameId:sender.frameId,childFrameId:null,ruleId}); }
       catch (error) {
         await updateRules(() => chrome.declarativeNetRequest.updateSessionRules({removeRuleIds:[ruleId]}));
