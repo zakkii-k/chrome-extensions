@@ -14,7 +14,7 @@ function browser() {
 test('missing command tab is resolved before page injection',async()=>{
  const {api,calls}=browser();
  assert.equal((await launch(api)).surface,'overlay');
- assert.deepEqual(calls,[['query',{active:true,lastFocusedWindow:true}],['inject',{target:{tabId:4},files:['launcher.js']}]]);
+ assert.deepEqual(calls,[['query',{active:true,lastFocusedWindow:true}],['inject',{target:{tabId:4},files:['overlay.js']}]]);
 });
 test('valid command tab is injected without querying again',async()=>{
  const {api,calls}=browser();await launch(api,source);assert.equal(calls.length,1);
@@ -32,4 +32,12 @@ test('failure never creates an OS window and reports both stages',async()=>{
   for(const text of ['page-injection','No site access','toolbar-popup','Failed to open popup'])assert.ok(error.message.includes(text));
   return true;
  });
+});
+test('browser-owned pages with unavailable popups are an expected limitation',async()=>{
+ for(const url of ['chrome://extensions','dia://newtab','about:blank']) {
+  const {api,calls}=browser();api.action.openPopup=async()=>{throw new Error('Failed to open popup');};
+  const result=await launch(api,{...source,url});
+  assert.equal(result.surface,'unavailable');assert.equal(result.reason,'restricted-page');
+  assert.equal(calls.some(call=>call[0]==='inject'),false);
+ }
 });

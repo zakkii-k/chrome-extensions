@@ -47,27 +47,25 @@ test("browser failures propagate so the UI can offer retry", async () => {
   await assert.rejects(openDestination({ search: { query: async () => { throw new Error("offline"); } } }, "cats"), /offline/);
 });
 
-test("search creates a new tab in the source browser window", async () => {
-  const created = [];
+test("search with a source tab never creates a placeholder history entry", async () => {
   const queries = [];
   const api = {
-    tabs: { create: async (options) => { created.push(options); return { id: 50 }; } },
+    tabs: { create: async () => { throw new Error('No placeholder tab'); } },
     search: { query: async (options) => queries.push(options) }
   };
   await openDestination(api, "東京 ランチ", { id: 7, windowId: 3 });
-  assert.deepEqual(created, [{ url: "about:blank", windowId: 3, active: true, openerTabId: 7 }]);
-  assert.deepEqual(queries, [{ text: "東京 ランチ", tabId: 50 }]);
+  assert.deepEqual(queries, [{ text: "東京 ランチ", disposition: "NEW_TAB" }]);
 });
 
-test("search failure removes only the newly created empty tab", async () => {
+test("search failure never removes an existing tab", async () => {
   const removed = [];
   const api = {
     tabs: {
-      create: async () => ({ id: 50 }),
+      create: async () => { throw new Error('No placeholder tab'); },
       remove: async (id) => removed.push(id)
     },
     search: { query: async () => { throw new Error("Search unavailable"); } }
   };
   await assert.rejects(openDestination(api, "test query", { id: 7, windowId: 3 }), /Search unavailable/);
-  assert.deepEqual(removed, [50]);
+  assert.deepEqual(removed, []);
 });

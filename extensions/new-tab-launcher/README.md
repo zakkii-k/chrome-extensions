@@ -9,11 +9,23 @@ Ctrl+Tでページ上に検索欄を表示し、入力してから新規タブ�
 
 検索結果にはブラウザ既定の検索エンジンを使います。入力候補はGoogleのサジェストとローカルの既存タブから取得します。既存タブのタイトルやURLは外部へ送信しません。
 
-## Windowsで導入・更新
+## 別PCのChrome・Edgeに入れる（Windows）
+
+1. 下のリリースから `new-tab-launcher-0.2.2-extension.zip` をダウンロードします。
+2. ZIPを右クリックして「すべて展開」。展開先は `ドキュメント\BrowserExtensions\new-tab-launcher` など、使い続ける場所にします。
+3. Chromeは `chrome://extensions`、Edgeは `edge://extensions` を開き、**デベロッパーモード**をオンにします。
+4. **「パッケージ化されていない拡張機能を読み込む」**（Edgeでは「展開して読み込み」などの表記）を選び、`manifest.json` が入ったフォルダを指定します。ZIP自体は選びません。
+5. 拡張のサイトアクセスを「すべてのサイト」にし、すでに開いていたWebページを再読み込みします。ChromeとEdgeそれぞれで読み込みます。
+
+リリース：[new-tab-launcher 0.2.2](https://github.com/zakkii-k/chrome-extensions/releases/tag/new-tab-launcher/v0.2.2)
+
+展開フォルダは使用中も必要なので削除・移動しないでください。ストア配布ではないため自動更新されません。更新時は新しいZIPの内容で同じフォルダを置き換え、拡張一覧の再読み込みボタンを押し、Webページも再読み込みしてください。別PCには同期だけではインストールされません。会社などで管理されたブラウザは、管理ポリシーにより読み込めない場合があります。
+
+## Windows補助スクリプトで配置する場合（任意）
 
 Chrome 127以降、または対応するChromiumブラウザを使用します。ビルド・npm installは不要です。
 
-1. [Releases](https://github.com/zakkii-k/chrome-extensions/releases)から `new-tab-launcher-0.2.0-windows.zip` をダウンロードし、ZIPを展開します。中の `new-tab-launcher` フォルダでWindows PowerShellを開き、次を実行します。
+1. [Releases](https://github.com/zakkii-k/chrome-extensions/releases)から `new-tab-launcher-0.2.2-windows.zip` をダウンロードし、ZIPを展開します。中の `new-tab-launcher` フォルダでWindows PowerShellを開き、次を実行します。
 
    ```powershell
    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\windows\prepare.ps1
@@ -21,13 +33,20 @@ Chrome 127以降、または対応するChromiumブラウザを使用します�
 
    Gitでこのリポジトリを取得した場合は、`extensions/new-tab-launcher` フォルダ内で同じコマンドを実行できます。スクリプトはファイルを `%LOCALAPPDATA%\NewTabLauncher` へコピーするだけで、ソフトウェアのインストールや常駐起動は行いません。
 
-2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.0** と表示されることを確認します。
+2. `chrome://extensions`（Diaでは `dia://extensions`）でデベロッパーモードを有効にし、`%LOCALAPPDATA%\NewTabLauncher\extension` を読み込みます。更新時は再読み込みし、**0.2.2** と表示されることを確認します。
 3. サイトへのアクセスとタブ情報を読む権限が追加されています。更新で無効になった場合は、権限を確認して有効化してください。拡張機能のサイトアクセスは「すべてのサイト」にします。
 4. `chrome://extensions/shortcuts`（Diaでは `dia://extensions/shortcuts`）で「検索バーを表示する」に **Ctrl+Shift+Space** を設定し、対象をブラウザ内にします。
 5. Webサイト上でCtrl+Shift+Spaceを試します。拡張機能アイコンからも入力できます。
 6. Ctrl+Tにする場合、[AutoHotkey v2](https://www.autohotkey.com/)をインストールし、`%LOCALAPPDATA%\NewTabLauncher\launcher.ahk` を起動します。Diaでは先にプロセス名を確認し、スクリプトのDia用GroupAdd行を有効にしてください。
 
 自動起動する場合は `Win+R` → `shell:startup` にAHKファイルのショートカットを置きます。終了は通知領域のAutoHotkeyアイコンからExit。終了すると標準のCtrl+Tに戻ります。
+
+## Chrome・Edgeで検索ショートカットを設定
+
+1. Chromeは `chrome://extensions/shortcuts`、Edgeは `edge://extensions/shortcuts` を開きます。
+2. New Tab Launcherの「検索バーを表示する」を **Ctrl+Shift+Space** に設定します。Chromeで実行範囲が選べる場合はブラウザ内にします。
+3. 通常のWebページ上で試します。ブラウザの新しいタブ・設定画面ではページ上の検索欄は表示できません。
+4. **Ctrl+Tで使う場合は、下のPowerToys設定を追加します。拡張単体ではブラウザ標準のCtrl+Tを置き換えられません。**
 
 ## PowerToysでCtrl+Tを置き換える
 
@@ -37,6 +56,7 @@ AutoHotkeyの代わりに、PowerToysのKeyboard Managerでも設定できます
 | --- | --- | --- |
 | Ctrl+T | Ctrl+Shift+Space | dia.exe |
 | Ctrl+T | Ctrl+Shift+Space | chrome.exe |
+| Ctrl+T | Ctrl+Shift+Space | msedge.exe |
 
 アプリ名は実行プロセス名を指定します。Diaのプロセス名が異なる場合はタスクマネージャーの「詳細」で確認してください。対象アプリを空欄にすると全アプリへ適用されます。PowerToysを起動してKeyboard Managerを有効にしている間だけ動作します。AutoHotkeyとの併用は不要です。
 
@@ -73,3 +93,7 @@ npm test
 公式資料：[Scripting API](https://developer.chrome.com/docs/extensions/reference/api/scripting)、[Tabs API](https://developer.chrome.com/docs/extensions/reference/api/tabs)、[Commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)、[Search API](https://developer.chrome.com/docs/extensions/reference/api/search)。
 
 [変更履歴](CHANGELOG.md) · [プライバシー](PRIVACY.md)
+
+## ページのショートカットとの分離
+
+検索欄はページ内の独立した拡張機能フレームに表示します。入力中のキーは背後のWebページへ伝わらず、Xのn等のページ側ショートカットを起動しません。Ctrl+C/V/A、削除、日本語変換は通常の入力欄として使用できます。Escで検索を閉じると元の入力位置に戻り、ページのショートカットも利用できます。ブラウザやOSが処理するショートカットを全面的に無効化する仕組みではありません。

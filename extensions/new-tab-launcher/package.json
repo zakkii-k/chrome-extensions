@@ -1,9 +1,10 @@
 {
   "name": "@zakkii-k/new-tab-launcher",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node --test tests/browser/*.browser.mjs"
   }
 }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "New Tab Launcher",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "入力してから新しいタブへ。既存のタブを維持する検索ランチャー。",
   "minimum_chrome_version": "127",
   "permissions": [
@@ -30,5 +30,16 @@
   "host_permissions": [
     "http://*/*",
     "https://*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "frame.html"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
   ]
 }

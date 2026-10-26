@@ -6,6 +6,12 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   if (command !== 'open-launcher') return;
   try {
     const result = await launch(chrome, tab);
+    if (result.surface === 'unavailable') {
+      console.info('Launcher unavailable on this browser-owned page');
+      await chrome.action.setBadgeText({ text:'!' });
+      await chrome.action.setTitle({ title:'ブラウザ内部の画面では表示できません。Webページ上で開いてください。' });
+      return;
+    }
     console.info('Launcher display', result);
     await chrome.action.setBadgeText({ text: '' });
     await chrome.action.setTitle({ title: 'New Tab Launcher' });

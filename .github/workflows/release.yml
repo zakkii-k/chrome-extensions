@@ -19,6 +19,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
       - run: npm run check:packages
       - name: Package the tagged extension
         run: python3 scripts/package_extensions.py "${RELEASE_TAG%/v*}" --tag "$RELEASE_TAG"
